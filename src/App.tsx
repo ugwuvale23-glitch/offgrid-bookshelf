@@ -15,6 +15,7 @@ import BookCard from "./components/BookCard";
 import Calculator from "./components/Calculator";
 import Reviews from "./components/Reviews";
 import AuthorSection from "./components/AuthorSection";
+import ShareWidget from "./components/ShareWidget";
 
 import coverPowerWater from "./assets/images/cover_power_water_1782921309462.jpg";
 import coverCabinBuild from "./assets/images/cover_cabin_build_1782921324561.jpg";
@@ -403,6 +404,9 @@ export default function App() {
 
         </div>
       </footer>
+
+      {/* Floating social media sharing bar and mobile trigger */}
+      <ShareWidget />
     </div>
   );
 }
