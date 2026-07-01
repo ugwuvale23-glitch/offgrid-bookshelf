@@ -1,0 +1,6 @@
+{
+  "name": "Off-Grid Bookstore",
+  "description": "An elegant author bookstore hub featuring an expert book catalog on off-grid living, power systems, cabin building, and homesteading.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
