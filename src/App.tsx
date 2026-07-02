@@ -112,7 +112,7 @@ const booksData = [
     title: "Beginner-Friendly Off-Grid Self-Sufficiency Blueprint",
     hook: "Your step-by-step masterplan to achieve complete energy, food, and water independence without prior technical skills.",
     sub: "Volume IV: Sustainable Independence",
-    imageUrl: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=800&q=80",
+    imageUrl: "https://m.media-amazon.com/images/I/811ZbVLbLZL.jpg",
     bullets: [
       "Construct simple, bulletproof rainwater collection and triple-stage filtration systems",
       "Design low-cost solar panels & portable battery setups for zero-billing energy",
