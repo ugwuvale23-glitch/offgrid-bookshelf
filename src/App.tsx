@@ -106,6 +106,34 @@ const booksData = [
         </svg>
       )
     }
+  },
+  {
+    id: 4,
+    title: "Beginner-Friendly Off-Grid Self-Sufficiency Blueprint",
+    hook: "Your step-by-step masterplan to achieve complete energy, food, and water independence without prior technical skills.",
+    sub: "Volume IV: Sustainable Independence",
+    imageUrl: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=800&q=80",
+    bullets: [
+      "Construct simple, bulletproof rainwater collection and triple-stage filtration systems",
+      "Design low-cost solar panels & portable battery setups for zero-billing energy",
+      "Create high-yield permaculture food plots and robust, long-term root cellars",
+      "Step-by-step DIY frameworks for off-grid waste, heating, and emergency shelters"
+    ],
+    buttonText: "View on Amazon",
+    buttonUrl: "https://www.amazon.com/Beginner-Friendly-Off-Grid-Self-Sufficiency-Blueprint-Independence-ebook/dp/B0FFXZL9Z2/",
+    themeColor: "accent-gold",
+    coverStyle: {
+      bg: "bg-amber-900",
+      text: "text-amber-100",
+      accent: "text-accent-gold",
+      pattern: "M0 10 Q 5 0, 10 10 T 20 10",
+      icon: (
+        <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path d="M12 3v18M3 12h18M12 3a9 9 0 100 18 9 9 0 000-18z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M12 8l4 4-4 4-4-4 4-4z" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      )
+    }
   }
 ];
 
@@ -243,8 +271,14 @@ export default function App() {
       </section>
 
       {/* THE BOOK CATALOG GRID */}
-      <section id="bookstore-catalog" className="bg-earth-50 border-y border-earth-200 py-20 md:py-28">
-        <div className="max-w-6xl mx-auto px-6 space-y-12 md:space-y-16">
+      <section 
+        id="bookstore-catalog" 
+        className="relative bg-cover bg-center border-y border-earth-200 py-20 md:py-28 overflow-hidden"
+        style={{ backgroundImage: `url('https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1920&q=80')` }}
+      >
+        {/* Soft morning forest overlay */}
+        <div className="absolute inset-0 bg-earth-warm/95 backdrop-blur-xs pointer-events-none" />
+        <div className="relative z-10 max-w-6xl mx-auto px-6 space-y-12 md:space-y-16">
           
           {/* Header */}
           <div className="text-center max-w-2xl mx-auto space-y-3">
@@ -260,7 +294,7 @@ export default function App() {
           </div>
 
           {/* Book Catalog Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {booksData.map((book) => (
               <BookCard key={book.id} book={book} />
             ))}
@@ -294,22 +328,37 @@ export default function App() {
       </section>
 
       {/* CALCULATOR SECTION */}
-      <section className="py-20 md:py-28">
-        <div className="max-w-6xl mx-auto px-6">
+      <section 
+        className="relative bg-cover bg-center py-20 md:py-28 overflow-hidden border-b border-earth-200"
+        style={{ backgroundImage: `url('https://images.unsplash.com/photo-1509391366360-2e959784a276?auto=format&fit=crop&w=1920&q=80')` }}
+      >
+        {/* Sun-glistening panels overlay */}
+        <div className="absolute inset-0 bg-stone-100/90 backdrop-blur-xs pointer-events-none" />
+        <div className="relative z-10 max-w-6xl mx-auto px-6">
           <Calculator />
         </div>
       </section>
 
       {/* REVIEW SECTION */}
-      <section className="bg-earth-50 border-t border-earth-200 py-20 md:py-28">
-        <div className="max-w-6xl mx-auto px-6">
+      <section 
+        className="relative bg-cover bg-center border-t border-earth-200 py-20 md:py-28 overflow-hidden"
+        style={{ backgroundImage: `url('https://images.unsplash.com/photo-1510312305653-8ed496efae75?auto=format&fit=crop&w=1920&q=80')` }}
+      >
+        {/* Cozy twilight evening campfire overlay */}
+        <div className="absolute inset-0 bg-earth-warm/93 backdrop-blur-xs pointer-events-none" />
+        <div className="relative z-10 max-w-6xl mx-auto px-6">
           <Reviews />
         </div>
       </section>
 
       {/* AUTHOR BIO SECTION */}
-      <section className="py-20 md:py-28 border-t border-earth-200">
-        <div className="max-w-6xl mx-auto px-6">
+      <section 
+        className="relative bg-cover bg-center py-20 md:py-28 border-t border-earth-200 overflow-hidden"
+        style={{ backgroundImage: `url('https://images.unsplash.com/photo-1473448912268-2022ce9509d8?auto=format&fit=crop&w=1920&q=80')` }}
+      >
+        {/* Forest trail path overlay */}
+        <div className="absolute inset-0 bg-stone-100/90 backdrop-blur-xs pointer-events-none" />
+        <div className="relative z-10 max-w-6xl mx-auto px-6">
           <AuthorSection />
         </div>
       </section>
@@ -351,6 +400,11 @@ export default function App() {
                   <li>
                     <a href="https://www.amazon.com/Backyard-Homestead-Projects-Preservation-Self-Sufficiency-ebook/dp/B0FJCM82LZ" target="_blank" rel="noopener noreferrer" className="hover:text-accent-gold transition-colors flex items-center gap-1">
                       Volume III: Homestead <ExternalLink className="w-3 h-3" />
+                    </a>
+                  </li>
+                  <li>
+                    <a href="https://www.amazon.com/Beginner-Friendly-Off-Grid-Self-Sufficiency-Blueprint-Independence-ebook/dp/B0FFXZL9Z2/" target="_blank" rel="noopener noreferrer" className="hover:text-accent-gold transition-colors flex items-center gap-1">
+                      Volume IV: Blueprint <ExternalLink className="w-3 h-3" />
                     </a>
                   </li>
                 </ul>
