@@ -16,6 +16,7 @@ import Calculator from "./components/Calculator";
 import Reviews from "./components/Reviews";
 import AuthorSection from "./components/AuthorSection";
 import ShareWidget from "./components/ShareWidget";
+import SovereigntyRoadmap from "./components/SovereigntyRoadmap";
 
 import coverPowerWater from "./assets/images/cover_power_water_1782921309462.jpg";
 import coverCabinBuild from "./assets/images/cover_cabin_build_1782921324561.jpg";
@@ -336,6 +337,18 @@ export default function App() {
         <div className="absolute inset-0 bg-stone-100/90 backdrop-blur-xs pointer-events-none" />
         <div className="relative z-10 max-w-6xl mx-auto px-6">
           <Calculator />
+        </div>
+      </section>
+
+      {/* SOVEREIGNTY ROADMAP SECTION */}
+      <section 
+        className="relative bg-cover bg-center py-20 md:py-28 overflow-hidden border-b border-earth-200"
+        style={{ backgroundImage: `url('https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=1920&q=80')` }}
+      >
+        {/* Sun-dappled canopy overlay */}
+        <div className="absolute inset-0 bg-stone-100/85 backdrop-blur-xs pointer-events-none" />
+        <div className="relative z-10 max-w-6xl mx-auto px-6">
+          <SovereigntyRoadmap />
         </div>
       </section>
 

@@ -1,6 +1,7 @@
 import React from "react";
-import { ArrowUpRight, BookOpen, CheckCircle2, ZoomIn, X } from "lucide-react";
+import { ArrowUpRight, BookOpen, CheckCircle2, ZoomIn, X, BookOpenText, FileText, Check, Sparkles } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
+import { bookChapters } from "../data/chapters";
 
 interface BookData {
   id: number;
@@ -28,6 +29,50 @@ interface BookCardProps {
 
 export default function BookCard({ book }: BookCardProps) {
   const [isLightboxOpen, setIsLightboxOpen] = React.useState(false);
+  const [activeTab, setActiveTab] = React.useState<"overview" | "sample">("overview");
+  const [textSize, setTextSize] = React.useState<"sm" | "base" | "lg">("base");
+  const [pageIndex, setPageIndex] = React.useState(0);
+  const [tilt, setTilt] = React.useState({ x: 0, y: 0 });
+  const [isHovered, setIsHovered] = React.useState(false);
+  const [hasCompletedChapter, setHasCompletedChapter] = React.useState<boolean>(() => {
+    try {
+      const saved = localStorage.getItem(`chapter-completed-${book.id}`);
+      return saved === "true";
+    } catch {
+      return false;
+    }
+  });
+
+  const handleToggleComplete = () => {
+    const nextVal = !hasCompletedChapter;
+    setHasCompletedChapter(nextVal);
+    try {
+      localStorage.setItem(`chapter-completed-${book.id}`, String(nextVal));
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const handleMouseMoveCover = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    
+    const xc = (x / rect.width) - 0.5;
+    const yc = (y / rect.height) - 0.5;
+
+    setTilt({
+      x: -yc * 26,
+      y: xc * 30
+    });
+  };
+
+  const handleMouseLeaveCover = () => {
+    setIsHovered(false);
+    setTilt({ x: 0, y: 0 });
+  };
+
+  const currentChapter = bookChapters[book.id];
 
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -57,7 +102,10 @@ export default function BookCard({ book }: BookCardProps) {
         
         {/* The 3D Book */}
         <div 
-          onClick={() => setIsLightboxOpen(true)}
+          onClick={() => {
+            setActiveTab("overview");
+            setIsLightboxOpen(true);
+          }}
           className="relative w-48 h-72 rounded-r-lg shadow-lg group-hover:shadow-2xl transition-all duration-300 transform group-hover:rotate-y-12 group-hover:scale-105 perspective-1000 origin-left flex flex-col overflow-hidden select-none cursor-zoom-in group/cover"
         >
           {book.imageUrl ? (
@@ -267,53 +315,160 @@ export default function BookCard({ book }: BookCardProps) {
               </motion.div>
 
               {/* Text Detail Side */}
-              <div className="flex-1 text-left space-y-6">
-                <div>
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-accent-gold/20 text-accent-gold border border-accent-gold/30 mb-3">
-                    Guidebook #{book.id}
-                  </span>
-                  <h3 className="font-serif text-2xl sm:text-3xl font-extrabold text-white leading-tight tracking-tight">
-                    {book.title}
-                  </h3>
-                  <p className="font-sans text-sm text-amber-400 font-medium tracking-wide mt-1.5">
-                    {book.sub}
-                  </p>
-                </div>
-
-                <p className="font-sans text-stone-300 text-sm sm:text-base leading-relaxed italic border-l-2 border-accent-gold/40 pl-4 py-1">
-                  &ldquo;{book.hook}&rdquo;
-                </p>
-
-                <div className="space-y-3">
-                  <h5 className="text-xs uppercase tracking-wider font-semibold text-stone-400">
-                    System Core Blueprints Included:
-                  </h5>
-                  <ul className="space-y-2">
-                    {book.bullets.map((bullet, idx) => (
-                      <li key={idx} className="flex items-start gap-2.5 text-xs sm:text-sm text-stone-300">
-                        <CheckCircle2 className="w-4.5 h-4.5 text-accent-gold shrink-0 mt-0.5" />
-                        <span className="leading-normal">{bullet}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                <div className="pt-4 border-t border-white/10 flex flex-wrap gap-4 items-center justify-between">
-                  <div className="text-stone-400 text-xs">
-                    <span className="block font-medium">Author Signature:</span>
-                    <span className="font-serif italic text-white text-sm">Asher Holt</span>
-                  </div>
-                  
-                  <a
-                    href={book.buttonUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 py-3 px-6 rounded-xl text-xs font-bold tracking-wide bg-accent-gold hover:bg-amber-600 text-forest-950 transition-all duration-200"
+              <div className="flex-1 text-left flex flex-col justify-between min-h-[480px] space-y-5">
+                {/* Tabs */}
+                <div className="flex gap-2 border-b border-white/10 pb-3 shrink-0">
+                  <button 
+                    onClick={() => setActiveTab("overview")}
+                    className={`px-4 py-2 rounded-xl text-xs font-bold tracking-wide transition-all cursor-pointer ${
+                      activeTab === "overview" 
+                        ? "bg-accent-gold text-forest-950 shadow-md" 
+                        : "bg-white/5 text-stone-300 hover:bg-white/10 hover:text-white"
+                    }`}
                   >
-                    {book.buttonText}
-                    <ArrowUpRight className="w-3.5 h-3.5" />
-                  </a>
+                    Overview & Blueprints
+                  </button>
+                  <button 
+                    onClick={() => setActiveTab("sample")}
+                    className={`px-4 py-2 rounded-xl text-xs font-bold tracking-wide transition-all flex items-center gap-1.5 cursor-pointer ${
+                      activeTab === "sample" 
+                        ? "bg-accent-gold text-forest-950 shadow-md" 
+                        : "bg-white/5 text-stone-300 hover:bg-white/10 hover:text-white"
+                    }`}
+                  >
+                    <BookOpenText className="w-3.5 h-3.5" /> Read Chapter 1 Sample
+                  </button>
                 </div>
+
+                {activeTab === "overview" ? (
+                  <div className="space-y-6 flex-1 flex flex-col justify-between">
+                    <div className="space-y-4">
+                      <div>
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-accent-gold/20 text-accent-gold border border-accent-gold/30 mb-3">
+                          Guidebook #{book.id}
+                        </span>
+                        <h3 className="font-serif text-2xl sm:text-3xl font-extrabold text-white leading-tight tracking-tight">
+                          {book.title}
+                        </h3>
+                        <p className="font-sans text-sm text-amber-400 font-medium tracking-wide mt-1.5">
+                          {book.sub}
+                        </p>
+                      </div>
+
+                      <p className="font-sans text-stone-300 text-sm sm:text-base leading-relaxed italic border-l-2 border-accent-gold/40 pl-4 py-1">
+                        &ldquo;{book.hook}&rdquo;
+                      </p>
+
+                      <div className="space-y-3">
+                        <h5 className="text-xs uppercase tracking-wider font-semibold text-stone-400">
+                          System Core Blueprints Included:
+                        </h5>
+                        <ul className="space-y-2">
+                          {book.bullets.map((bullet, idx) => (
+                            <li key={idx} className="flex items-start gap-2.5 text-xs sm:text-sm text-stone-300">
+                              <CheckCircle2 className="w-4.5 h-4.5 text-accent-gold shrink-0 mt-0.5" />
+                              <span className="leading-normal">{bullet}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+
+                    <div className="pt-4 border-t border-white/10 flex flex-wrap gap-4 items-center justify-between">
+                      <div className="text-stone-400 text-xs">
+                        <span className="block font-medium">Author Signature:</span>
+                        <span className="font-serif italic text-white text-sm">Asher Holt</span>
+                      </div>
+                      
+                      <a
+                        href={book.buttonUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 py-3 px-6 rounded-xl text-xs font-bold tracking-wide bg-accent-gold hover:bg-amber-600 text-forest-950 transition-all duration-200"
+                      >
+                        {book.buttonText}
+                        <ArrowUpRight className="w-3.5 h-3.5" />
+                      </a>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="space-y-4 flex-1 flex flex-col justify-between">
+                    <div className="flex items-center justify-between bg-white/5 px-3 py-1.5 rounded-lg text-xs">
+                      <span className="text-stone-300 font-medium">{currentChapter?.chapterTitle || "Sample Text"}</span>
+                      <div className="flex items-center gap-1.5 text-stone-400 font-bold">
+                        <span>Size:</span>
+                        <button 
+                          onClick={() => setTextSize("sm")}
+                          className={`w-5 h-5 rounded flex items-center justify-center text-[10px] cursor-pointer ${textSize === "sm" ? "bg-accent-gold text-forest-950 font-extrabold" : "hover:bg-white/10"}`}
+                        >
+                          A-
+                        </button>
+                        <button 
+                          onClick={() => setTextSize("base")}
+                          className={`w-5 h-5 rounded flex items-center justify-center text-xs cursor-pointer ${textSize === "base" ? "bg-accent-gold text-forest-950 font-extrabold" : "hover:bg-white/10"}`}
+                        >
+                          A
+                        </button>
+                        <button 
+                          onClick={() => setTextSize("lg")}
+                          className={`w-5 h-5 rounded flex items-center justify-center text-[13px] cursor-pointer ${textSize === "lg" ? "bg-accent-gold text-forest-950 font-extrabold" : "hover:bg-white/10"}`}
+                        >
+                          A+
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Book Parchment Excerpt Reader */}
+                    <div className="bg-[#FAF6EC] text-[#2D2A26] rounded-2xl p-5 sm:p-7 border border-amber-900/15 shadow-inner overflow-y-auto max-h-[260px] font-serif relative">
+                      <div className="space-y-4 leading-relaxed">
+                        <div className="text-center pb-4 border-b border-amber-900/10 mb-6">
+                          <span className="text-[9px] tracking-[0.25em] uppercase text-amber-900/60 block font-sans font-bold">Free Reading Excerpt</span>
+                          <h4 className="text-base sm:text-lg font-bold text-amber-950 mt-1">{currentChapter?.chapterTitle}</h4>
+                          <p className="text-[11px] text-amber-900/80 italic mt-0.5">{currentChapter?.chapterSubtitle}</p>
+                        </div>
+                        {currentChapter?.paragraphs.map((para, i) => (
+                          <p 
+                            key={i} 
+                            className={`text-stone-850 tracking-wide leading-relaxed text-justify ${
+                              textSize === "sm" ? "text-xs sm:text-sm" : textSize === "lg" ? "text-base sm:text-lg" : "text-sm sm:text-base"
+                            } ${i === 0 ? 'first-letter:text-4xl first-letter:font-bold first-letter:text-amber-950 first-letter:mr-2 first-letter:float-left first-letter:font-serif' : ''}`}
+                          >
+                            {para}
+                          </p>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Completion Challenge */}
+                    <div className="p-3.5 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between gap-3 shrink-0">
+                      <div className="flex items-center gap-3">
+                        <button 
+                          onClick={handleToggleComplete}
+                          className={`w-5.5 h-5.5 rounded-md flex items-center justify-center border transition-all cursor-pointer ${
+                            hasCompletedChapter 
+                              ? "bg-accent-gold border-accent-gold text-forest-950" 
+                              : "border-stone-500 hover:border-white"
+                          }`}
+                        >
+                          {hasCompletedChapter && <Check className="w-3.5 h-3.5 stroke-[3px]" />}
+                        </button>
+                        <div className="text-left">
+                          <span className="text-xs font-bold text-white block">Mark Sample as Read</span>
+                          <span className="text-[10px] text-stone-400 block">Commit this blueprint to memory</span>
+                        </div>
+                      </div>
+                      {hasCompletedChapter && (
+                        <motion.div 
+                          initial={{ scale: 0.8, opacity: 0 }}
+                          animate={{ scale: 1, opacity: 1 }}
+                          className="flex items-center gap-1 text-[10px] font-bold text-accent-gold bg-accent-gold/10 px-2.5 py-1 rounded-md"
+                        >
+                          <Sparkles className="w-3 h-3 text-accent-gold animate-bounce" /> +10 Sovereignty Score
+                        </motion.div>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </motion.div>
